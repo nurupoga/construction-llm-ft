@@ -57,13 +57,23 @@ hf_cache/
 # ================
 # Data files
 # ================
-# PDF原本は容量次第で後から判断。デフォルトはcommitする方針。
-# 大きくなった場合は下行のコメントアウトを外す:
-# data/raw/*.pdf
+# RETIO 過去問PDFは著作権配慮で commit しない。
+# manifest.json のみ commit する（URL/SHA256/メタデータ）。
+data/raw/**/*.pdf
+data/raw/**/*.PDF
 
-# 中間生成物（巨大化する可能性あり）
-data/raw/extracted/
+# PDFから抽出したテキスト・画像（中間生成物）
+data/raw/**/extracted/
+data/raw/**/*.txt
+data/raw/**/*.png
+data/raw/**/*.jpg
+data/raw/**/*.tif
+data/raw/**/*.tiff
+
+# 学習用JSONL・評価セットも本文を含むため非コミット
+data/jsonl/**/*.jsonl
 data/jsonl/**/*.tmp
+data/eval/**/*.jsonl
 data/eval/**/*.tmp
 
 # ================

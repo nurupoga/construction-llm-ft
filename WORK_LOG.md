@@ -119,4 +119,42 @@
 - [CLAUDE.md] 「公開方針（2026-04-23 確定: 全非公開）」セクション追加、目的欄・成果保管欄を更新
 - [NEXT_TASK.md] 宅建士スコープ・Phase 0/2完了ステータス・公開撤廃を反映、残ブロッカーを Colab 自動保存のみに整理
 - [Phase 2-2 準備] サブエージェントで RETIO 12PDF ダウンロードへ進む予定（著作権法30条の4下のローカル学習用途でクリア、公開しないのでリスクさらに低下）
+- [Phase 2-2 完了] 12PDF ダウンロード成功（失敗0件、合計12.2MB）
+  - 保存先: `data/raw/takken/<year>/*.pdf`、2020/2021 は oct/dec 別ファイル
+  - 全ファイル `file` コマンドで PDF 認識、SHA-256 を `data/raw/takken/manifest.json` に記録
+  - 2023年度 R5 の全角スペース URL は `%E3%80%80` エンコードで正常取得
+  - **テキスト抽出性の事前調査**:
+    - 2023/2024/2025: `pdfplumber` で直接日本語テキスト抽出可能
+    - 2016〜2022（9ファイル）: 画像PDF（CCITT Fax）、**OCR必須**（tesseract -l jpn 予定）
+    - Phase 2-4（PDF→構造化）では 2022以前と 2023以降で別パイプラインを用意する必要あり
+- [.gitignore 更新] 著作権配慮で `data/raw/**/*.pdf` と `data/jsonl/**/*.jsonl` を除外対象に追加。manifest.json はメタデータのみのため commit 対象として残す
+
+## セッション終了前のまとめ（2026-04-23 Mac Mini Claude）
+
+### 完了した作業（自走指示範囲）
+- Phase 0（凍結・準備）全完了
+  - 試験種スコープ確定（宅建士1試験、2016-2025）
+  - `docs/freeze-spec.md` 作成
+  - プロジェクトディレクトリ + `.gitignore` 初期化
+- Phase 2-1/2-2/2-3（データ収集前半）全完了
+  - `docs/data-sources.md`（RETIO 12PDF URL 列挙、HTTP 200 確認）
+  - `docs/license-check.md`（30条の4 で学習OK、逐語再生成対策必要）
+  - 12PDF ローカルダウンロード + manifest.json + 抽出性事前チェック
+
+### 計画変更 2件（ユーザー決定）
+1. 試験種スコープ: 施工管理6種 → 宅建士1試験（旧調査は `docs/archive/` に退避）
+2. 公開スコープ: HF/Zenn/GitHub public → 全非公開（Mac Mini + private repo 保管）
+
+### 次回やること（Phase 2-4 以降）
+- **Phase 2-4 (PDF→構造化)**: 2023以降は `pdfplumber` で直抽出、2016-2022 は `pdftoppm + tesseract -l jpn` で OCR する2経路パイプライン構築
+- **Phase 2-5〜 (JSONL 整形)**: 50問×10年 をfreeze-spec.md 準拠の `{instruction, input, output}` 形式へ
+- **Phase 1 (PoC) 着手可否**: Colab 自動保存設定のユーザー側準備のみブロッカー（HFトークン・Qwen2.5同意は公開撤廃により不要化）
+
+### ユーザー判断が必要になりそうな点（メモ）
+- 2020/2021 の10月・12月試験を train にどう入れるか（両方 train or 片方に寄せる）
+- 2025年度eval の正解データ取得タイミング（R7 PDFに同梱済みのため解決済、要再確認）
+- Phase 3 解説合成を実施するか（Gemini API はキー受領済、費用と学習効果のトレードオフ）
+- OCR パイプラインを Mac Mini ローカルで構築する前提でよいか（GPU不要だが tesseract 導入が必要）
+
+### セッション終了
 
