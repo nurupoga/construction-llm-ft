@@ -21,6 +21,25 @@
 - メイン作業は Mac Mini 側 Claude Code セッション
 - ローカルは議論メモ・タスクリスト閲覧用
 
+## 進捗共有ルール（厳守）
+**Mac Mini側Claude**は以下を必ず守る。ローカル新セッションが進捗を取りに来るので、状態が古いとユーザーに混乱を与える。
+
+1. **節目ごとに WORK_LOG.md を更新 → git commit → git push**
+   - 節目 = Phaseの1サブタスク完了 / 大きなエラーで方針変更 / ユーザーへの確認事項発生
+   - 最低でも1時間に1回はpush（長時間処理中なら「実行中」ステータスをcommit）
+2. **進捗状況は `WORK_LOG.md` 末尾に Markdown で書く**
+   - 何をやった、結果、次のステップ、ブロッカー、ユーザーへの依頼事項
+3. **ユーザー判断が必要になったら `WAITING_FOR_USER.md` を作って push**
+   - 待ちが解消されたらこのファイルを削除
+   - ローカルセッションがこのファイル存在を確認したら即ユーザーに報告する
+4. **作業終了時** は `WORK_LOG.md` の最後に「セッション終了」と明記
+
+**ローカル新セッション側**は以下を守る:
+1. 「FT」「建設」「進捗」関連の話題で起動したら、まず `cd /Users/user/university/construction-llm-ft && git pull` を実行
+2. `tail -80 WORK_LOG.md` で最新進捗を確認
+3. `WAITING_FOR_USER.md` の存在を確認、あれば内容をユーザーに報告
+4. ユーザーへの報告 → 必要ならMac Mini側Claudeへの追加指示を WORK_LOG に書く（or `NEXT_TASK.md` 更新）
+
 ## 技術スタック（決定）
 - ベースモデル: **Qwen2.5-7B-Instruct**（日本語強い、Colab無料枠と相性◎）
 - 手法: **QLoRA(4bit)** + **Unsloth**（T4最適化、素のtransformersの2倍速）
