@@ -51,4 +51,41 @@
 - [Phase 0-3] ディレクトリ初期化: data/{raw,jsonl/{train,eval},eval} + scripts/ + notebooks/ + results/
 - [Phase 0-3] `.gitignore` 新規作成（Python/Colab/HF/モデル成果物/Mac系を除外）
 - [Phase 2-1,2-3] 背景サブエージェント2件を並列起動（過去問入手元調査・著作権調査）、完了待ち
+- [Phase 2-3 完了] 施工管理6種の利用規約調査完了。建築系（振興基金）「転載禁止」明示、土木系（JCTC）相対的にクリーン、建設機械系（JCMA）「如何なる権利も許諾しない」で最厳。サブエージェントからはPoC起点を土木1級に寄せる推奨あり
+
+## 計画変更: 試験種スコープ（施工管理6種 → 宅建士1種）
+
+- **計画**: 1級建築施工管理技士1種でPoC、PoC成功後に施工管理6種へ拡張
+- **実装**: 宅地建物取引士（宅建士）1試験に変更。直近10年（2016-2025）×50問=500問
+- **理由**:
+  - ユーザー自身の学習動機と一致（副次価値）
+  - データ整備が良好（年1回50問4択で構造クリーン）
+  - 著作権面でも比較的クリーン（Phase 2-3 再実行で検証）
+  - 知名度高く公開時インパクト大（建設・不動産業界向けLLMとしての訴求力）
+  - Phase 2-3 調査でも建築系（振興基金）は「転載禁止」明示でリスク高く、代替試験種検討が妥当化
+- **ユーザー許可**: あり（会話で明示）
+- **許可の取り方**: ユーザーから方針変更メッセージで明示指示
+- **日時**: 2026-04-23
+- **影響範囲**:
+  - 進行中の Phase 2-1 サブエージェント（施工管理入手元調査）→ 停止
+  - 既作成の `docs/data-sources.md` `docs/license-check.md` → `docs/archive/` に退避（ファイル名に `-construction` サフィックス付与）
+  - `CLAUDE.md` のタイトル・データ戦略・未決定事項セクション書き換え
+  - `docs/freeze-spec.md` を宅建士ベースに全面書き換え（試験コード arch1 → takken、年度2021-2025 → 2016-2025、問題数 → 50問/年固定）
+  - リポジトリ名 `construction-llm-ft` は据え置き（建設・不動産ドメインLLMの包括名として）
+
+### 方針変更後の作業ログ
+- [停止] サブエージェント a7bffe74... (Phase 2-1 施工管理調査) を TaskStop で停止
+- [退避] `docs/data-sources.md` → `docs/archive/data-sources-construction.md`（mv）
+- [退避] `docs/license-check.md` → `docs/archive/license-check-construction.md`（mv）
+- [Phase 0-1 再実行] CLAUDE.md を宅建士ベースに書き換え（データ戦略・未決定事項・関連ドキュメント）
+- [Phase 0-2 再実行] `docs/freeze-spec.md` を宅建士ベースに全面書き換え（試験コード takken、10年分500問、2020年分割実施対応、法令基準日注記追加）
+- [環境変数] Gemini APIキーをユーザーから受領 → `~/construction-llm-ft/.env`（chmod 600、.gitignore済）保存確認。CLAUDE.md に「環境変数・APIキー管理」セクション追加。Phase 3解説合成で `python-dotenv` + `os.getenv("GEMINI_API_KEY")` で参照する方針記録
+- [Phase 2-1 再起動] 宅建士過去問入手元調査の背景サブエージェント再起動（RETIO起点、10年分PDF URL列挙）
+- [Phase 2-3 再起動] 宅建士著作権調査の背景サブエージェント再起動（RETIO規約、著作権法30条の4 適用評価）
+- [Phase 2-1 完了] `docs/data-sources.md` 新規作成。RETIO公式で 2016-2025 全12ファイル（2020/2021はコロナ分割で各2ファイル）の直リンクを HTTP 200 確認済で列挙。主な発見:
+  - 昭和63年〜令和7年の全年度公開あり（拡張余地大）
+  - 問題+正答が1つのPDFに同梱、公式解説なし（自作/合成必要 → Phase 3 Gemini API）
+  - PDFがCCITT Fax画像形式の可能性 → `pdftotext` では抽出不可、OCR（`pdftoppm + tesseract -l jpn`）が必要見込み
+  - 2023年度(R5)のPDFファイル名に全角スペース＋typo（`qestion`）、URLエンコード必須
+  - 利用規約は「私的使用・引用以外は無断転載不可」、AI学習用途の明示的許諾記述なし → 公開運用方針は Phase 2-3 調査結果と合わせて確定
 
