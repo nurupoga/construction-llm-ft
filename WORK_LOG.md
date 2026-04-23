@@ -34,3 +34,16 @@
   - GitHub経由でローカル⇔Mac Mini同期
 - [タスクリストv2 承認] PoC新設・Phase 7まで再整理した最終版を採用
 - [準備] GitHubリポ作成→push→Mac Miniにclone→Mac Mini側Claudeセッション立ち上げ予定
+
+---
+
+## 2026-04-23 Mac Mini Claudeセッション開始
+
+### ゴール
+- Phase 0（凍結・準備）完走
+- Phase 2-1〜2-3（過去問入手元調査・PDFダウンロード・著作権確認）完了
+- Phase 1 PoC と Phase 3 解説合成はBブロック準備待ちのため **進めない**
+
+### 作業ログ
+- [開始] Mac Mini Claudeセッション開始、Phase 0着手
+
