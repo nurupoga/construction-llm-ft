@@ -1,0 +1,78 @@
+# ================
+# Python
+# ================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+ENV/
+.python-version
+
+# ================
+# Jupyter / Colab
+# ================
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+.colab-checkpoints/
+
+# ================
+# macOS
+# ================
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# ================
+# Editors
+# ================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ================
+# Model artifacts (big files)
+# ================
+*.bin
+*.safetensors
+*.gguf
+*.pt
+*.pth
+*.ckpt
+checkpoints/
+lora_adapter/
+outputs/
+
+# ================
+# HuggingFace / transformers cache
+# ================
+.cache/
+hf_cache/
+
+# ================
+# Data files
+# ================
+# PDF原本は容量次第で後から判断。デフォルトはcommitする方針。
+# 大きくなった場合は下行のコメントアウトを外す:
+# data/raw/*.pdf
+
+# 中間生成物（巨大化する可能性あり）
+data/raw/extracted/
+data/jsonl/**/*.tmp
+data/eval/**/*.tmp
+
+# ================
+# Secrets / Env
+# ================
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+secrets/
+credentials.json

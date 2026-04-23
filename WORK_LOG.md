@@ -46,4 +46,9 @@
 
 ### 作業ログ
 - [開始] Mac Mini Claudeセッション開始、Phase 0着手
+- [Phase 0-1] 試験種スコープ確定: PoCは1級建築施工管理技士1種（直近5年, 2021-2025）。CLAUDE.md更新
+- [Phase 0-2] `docs/freeze-spec.md` 作成。プロンプト形式・採点ロジック・生成パラメータ・LoRAハイパラを固定
+- [Phase 0-3] ディレクトリ初期化: data/{raw,jsonl/{train,eval},eval} + scripts/ + notebooks/ + results/
+- [Phase 0-3] `.gitignore` 新規作成（Python/Colab/HF/モデル成果物/Mac系を除外）
+- [Phase 2-1,2-3] 背景サブエージェント2件を並列起動（過去問入手元調査・著作権調査）、完了待ち
 
