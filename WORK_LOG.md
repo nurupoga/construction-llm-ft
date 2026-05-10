@@ -188,3 +188,12 @@
 - Phase 2-4/2-5 は Colab自動保存完了を待たずに並行で進められる
 
 ### セッション終了
+
+---
+
+## 2026-05-11 追記: Colab準備完了
+
+- ユーザーが Colab で Drive マウント + checkpointディレクトリ作成を実施
+- 確認結果: `Exists: True`（`/content/drive/MyDrive/construction-llm-ft/checkpoints/takken-qwen25-7b`）
+- **Colab準備完了、Phase 1 着手OK**
+- Mac Mini側 `ftwork` セッションは Phase 2-4 → 2-5 → 1（PoC）の順で進めて構いません
