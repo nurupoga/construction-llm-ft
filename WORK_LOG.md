@@ -197,3 +197,21 @@
 - 確認結果: `Exists: True`（`/content/drive/MyDrive/construction-llm-ft/checkpoints/takken-qwen25-7b`）
 - **Colab準備完了、Phase 1 着手OK**
 - Mac Mini側 `ftwork` セッションは Phase 2-4 → 2-5 → 1（PoC）の順で進めて構いません
+
+---
+
+## 2026-05-11 Mac Mini Claudeセッション再開、Phase 2-4 着手
+
+### ゴール
+- Phase 2-4 経路1: pdfplumberで2023/2024/2025の3PDFから中間JSON抽出
+- Phase 2-4 経路2: 2016-2022用のOCR Colabノート雛形作成
+- Phase 2-5: build_jsonl.py 作成、train/eval JSONL生成
+- Phase 1着手OK状態（Colab自動保存準備完了済）
+
+### 確認済前提
+- 2020/2021 oct/dec 分割は両方train、Phase 3合成解説は不実施、OCRはColab上、Drive checkpoint確認済(Exists: True)
+- WAITING_FOR_USER.md 不在、ブロッカーなし
+
+### 作業ログ（実行中）
+- [開始] WORK_LOGにセッション開始記録、Phase 2-4 サブエージェント委譲予定
+
