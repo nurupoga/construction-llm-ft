@@ -1,0 +1,50 @@
+{
+  "exam_code": "takken",
+  "generated_at": "2026-05-10T15:17:20.593274+00:00",
+  "extractor": "pdfplumber",
+  "extractor_version": "0.11.9",
+  "entries": [
+    {
+      "year": 2023,
+      "source_pdf": "data/raw/takken/2023/R5-q_a.pdf",
+      "output_json": "data/jsonl/intermediate/2023.json",
+      "extracted_at": "2026-05-10T15:17:19.050667+00:00",
+      "stats": {
+        "num_questions": 50,
+        "num_with_4_choices": 50,
+        "num_with_answer": 50,
+        "num_answers_found": 50,
+        "missing_question_numbers": [],
+        "missing_answer_numbers": []
+      }
+    },
+    {
+      "year": 2024,
+      "source_pdf": "data/raw/takken/2024/R6_question_answer.pdf",
+      "output_json": "data/jsonl/intermediate/2024.json",
+      "extracted_at": "2026-05-10T15:17:19.805897+00:00",
+      "stats": {
+        "num_questions": 50,
+        "num_with_4_choices": 50,
+        "num_with_answer": 50,
+        "num_answers_found": 50,
+        "missing_question_numbers": [],
+        "missing_answer_numbers": []
+      }
+    },
+    {
+      "year": 2025,
+      "source_pdf": "data/raw/takken/2025/R7_question_answer.pdf",
+      "output_json": "data/jsonl/intermediate/2025.json",
+      "extracted_at": "2026-05-10T15:17:20.592297+00:00",
+      "stats": {
+        "num_questions": 50,
+        "num_with_4_choices": 50,
+        "num_with_answer": 50,
+        "num_answers_found": 50,
+        "missing_question_numbers": [],
+        "missing_answer_numbers": []
+      }
+    }
+  ]
+}
