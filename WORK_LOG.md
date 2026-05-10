@@ -158,3 +158,33 @@
 
 ### セッション終了
 
+---
+
+## 2026-05-10 セッション（ローカル新セッション・進捗確認＆判断ヒアリング）
+
+### ゴール
+- 2.5週間放置されていたプロジェクトの残タスクを整理
+- ブロッカーになっていたユーザー判断4件を確定し、Mac Mini側を再始動できる状態にする
+
+### 作業ログ
+- [確認] 最終commit 4/23、`WAITING_FOR_USER.md` 不在。Mac Mini側 `ftwork` セッションも停止していると推測
+- [整理] 残Phase（2-4 / 2-5 / 1 / 4-5 / 6）と判断保留事項4件を抽出してユーザー提示
+- [判断確定（4件）]
+  1. **2020/2021の10月/12月分割実施分**: 両方train（年度内で別問題、リーク無し）
+  2. **Phase 3（Gemini API合成解説）**: 不実施。`output` は正解番号+短い理由文のみで学習。効果不足ならPoC後に追加投入
+  3. **OCRパイプライン構築場所**: Colab上で実行（Mac Miniにtesseract導入不要）
+  4. **Colab自動保存**: ユーザー設定中（Drive `/content/drive/MyDrive/construction-llm-ft/checkpoints/`、`save_strategy="steps"`, `save_steps=50`, `save_total_limit=2`）
+- [反映] CLAUDE.md「学習/評価分割」「未決定事項→確定済み判断」セクションを書き換え
+- [反映] NEXT_TASK.md を 2026-05-10 ステータスに刷新（Phase 2-4を Mac Mini経路 + Colab経路に分割、ブロッカー解消、着手手順A〜F明記）
+
+### 次回（Mac Mini側Claude）やること
+1. **Phase 2-4 経路1（Mac Mini）**: `scripts/extract_pdf_text.py` で 2023/2024/2025 を `pdfplumber` 抽出
+2. **Phase 2-4 経路2（Colab）**: `notebooks/ocr_pipeline.ipynb` で 2016-2022 の9PDF を `pdftoppm + tesseract -l jpn` でOCR
+3. **Phase 2-5（Mac Mini）**: 中間データを freeze-spec.md 準拠の JSONL へ整形、train/eval分割
+4. Colab自動保存準備完了を WORK_LOG で確認したら **Phase 1 PoC** へ進む
+
+### 状態
+- ローカル側で commit & push 実施 → Mac Mini側 `ftwork` セッションが次回起動時に拾う想定
+- Phase 2-4/2-5 は Colab自動保存完了を待たずに並行で進められる
+
+### セッション終了
