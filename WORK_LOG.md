@@ -215,3 +215,11 @@
 ### 作業ログ（実行中）
 - [開始] WORK_LOGにセッション開始記録、Phase 2-4 サブエージェント委譲予定
 
+## 2026-05-11 追記: Mac Mini Chrome に Colab ノート常駐（ローカル側追記）
+
+- ユーザーが **Mac Mini の Chrome で `takken_ft_poc.ipynb` を開放済み**（同じGoogleアカウント、Driveマウント済の状態）
+- ノートURL: https://colab.research.google.com/drive/1IUNyG5WHxYY_otKCzRgbeyzPoX8Ynq5c?hl=ja
+- Mac Mini側Claudeへの含意:
+  - **Phase 4-5 (FT本体)** は Mac Mini Chrome で実行する想定。MacBook閉じてもセッション切れない
+  - **Phase 2-4 経路2 (OCR)** で `notebooks/ocr_pipeline.ipynb` を新規作成する場合、Driveに置いてMac Mini Chromeで開いて実行すればOK（ユーザーへの実行依頼は WAITING_FOR_USER.md で）
+  - もし playwright-cli 等で Claude が直接 Mac Mini Chrome を操作する余地があれば検討可（ただし「Allow remote debugging」の状態は未確認、無理せずユーザーに実行ボタンを押してもらう運用で十分）
