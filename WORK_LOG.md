@@ -223,3 +223,83 @@
   - **Phase 4-5 (FT本体)** は Mac Mini Chrome で実行する想定。MacBook閉じてもセッション切れない
   - **Phase 2-4 経路2 (OCR)** で `notebooks/ocr_pipeline.ipynb` を新規作成する場合、Driveに置いてMac Mini Chromeで開いて実行すればOK（ユーザーへの実行依頼は WAITING_FOR_USER.md で）
   - もし playwright-cli 等で Claude が直接 Mac Mini Chrome を操作する余地があれば検討可（ただし「Allow remote debugging」の状態は未確認、無理せずユーザーに実行ボタンを押してもらう運用で十分）
+
+## 2026-05-11 追記2: 【重要】Mac Mini Chrome の attach 自動化は禁止
+
+ユーザーから明確な再警告（**過去に同じミスを何度も繰り返している**）:
+
+- Mac Mini Chrome の Allow remote debugging トグルは常時ON
+- **しかし** Chrome側の挙動として、`playwright-cli attach --cdp=chrome` を実行するたびに **「Allow remote debugging」承認ダイアログ**が出て、ユーザーの操作（クリック）が必要
+- **ユーザーが席を外している間に attach を要求すると承認できず、Mac Mini側Claude が詰まる**
+- 過去にこのパターンで複数回詰まっており、ユーザーから「絶対やめろ」と再三指示されている
+
+### Mac Mini Claude への厳格ルール（サブエージェントにも継承）
+
+1. **ユーザー不在時の `playwright-cli attach` 禁止**
+   - 在席確認なしに attach 試行は禁止
+   - サブエージェント委譲時も「attach使ってOK」を含めない
+2. **Colab 実行は基本 WAITING_FOR_USER.md 経由**
+   - `notebooks/<name>.ipynb` を Drive にアップしたら、`WAITING_FOR_USER.md` を作って push
+   - 内容: 「Mac Mini Chromeで `<URL>` を開いて『ランタイム → すべてのセルを実行』を押してください」
+   - ユーザーは Mac Mini Chrome で実行ボタンを押すだけ
+3. **長時間自動化が必要な時のみ、ユーザー在席中に事前 attach**
+   - そのケースは事前にユーザーへ相談（`WAITING_FOR_USER.md` で「次のXX時間で attach 承認お願いします」）
+   - 承認後は `-s=<session_name>` でセッション保持、不在時間中はそのセッション内でのみ操作
+   - **「自動化したいから attach する」を独断で判断するな**
+4. **PCR (post-commit reflection)**: サブエージェントへの指示に「playwright-cli」「ブラウザ自動化」「attach」のいずれかを含める時、必ず本ルールも添付して継承させる
+
+## 2026-05-11 00:18 ユーザー就寝中の自走指針
+
+ユーザーから「おやすみ。それでは画面さわれないから続けておいてね」「サブエージェントにも遵守させないと結構attachし直されてうざいことになる」との指示。
+
+### 不在中（数時間〜翌朝）に進めてよい範囲
+- ✅ **Phase 2-4 経路1**: `scripts/extract_pdf_text.py` 作成、2023-2025の3PDFを `pdfplumber` 抽出（Mac Miniローカル、attach不要）
+- ✅ **Phase 2-4 経路2 の準備**: `notebooks/ocr_pipeline.ipynb` の**雛形作成のみ**。Driveに置くところまで。**実行はユーザー在席後**
+- ✅ **Phase 2-5 一部**: 2023-2025分の中間JSONを `freeze-spec.md` 準拠JSONL（train side）に整形開始。OCR待ちの2016-2022分は穴を開けて待つ
+
+### 不在中に絶対やってはいけないこと
+- ❌ `playwright-cli attach --cdp=chrome` 実行（ダイアログ承認できない）
+- ❌ サブエージェントに「Colabを開いて操作して」系の指示（サブエージェントが安易にattachする）
+- ❌ Colab実行が必要なステップに進む（Phase 1, Phase 4-5 など）
+- ❌ HF/PyPI への push, Slack等の外部送信
+
+### Colab実行が必要な段階に到達したら
+- そこで一旦止め、`WAITING_FOR_USER.md` を作って push
+- ユーザーが朝起きて気付いたら手動で実行ボタンを押す or attach 承認する
+- それまで Mac Mini Claude は別タスク or 待機
+
+### サブエージェント指示文の必須テンプレート
+Mac Mini Claude がサブエージェントを起動する時、prompt に以下を**必ず**含める:
+
+```
+【厳守】playwright-cli attach禁止、ブラウザ自動化禁止、Colabセル実行禁止。
+ユーザーは現在不在。attach要求はダイアログ承認できず詰む。
+Colab実行が必要になったら親セッションに「WAITING_FOR_USER.md作成依頼」で戻ること。
+```
+
+### 自走判断の範囲（ユーザー追加指示）
+
+ユーザーから「**ユーザーの許可も、大きな問題（コストなど）出ない限りやっておいて。許可出せないから、寝ちゃうので**」との明示指示。
+
+**止まる条件（この3つだけ）**:
+1. **データ破壊リスク**: DROP, `git push --force` to main, `rm -rf` 系、既存重要ファイル上書き
+2. **課金発生**: 有料API初使用、クラウドリソース新設、Colab Pro契約 等
+3. **認証情報が必要**: 新規HFトークン取得、別Googleアカウント認証 等
+
+**上記以外は自走判断で進めてよい**:
+- 設計の細かい選択（ファイル名、関数名、ディレクトリ構成）
+- サブエージェント分割粒度・並列度
+- エラー時のリトライ戦略・代替手段選択
+- 中間ファイルのフォーマット選択（JSON / JSONL / Parquet 等）
+- LoRA hyperparam の微調整（freeze-spec.md 範囲内）
+- ライブラリ選択（pdfplumber / PyMuPDF / pdfminer など同等のもの）
+
+**判断したら WORK_LOG.md に「自己判断: X を選択、理由 Y」と記録するだけでOK**。WAITING_FOR_USER.md は不要。
+
+### 改めて: 朝までの理想シナリオ
+
+朝ユーザーが起きた時に WORK_LOG.md を見て、以下が完了していると最高:
+- Phase 2-4 経路1 完了（2023-2025のJSON抽出）
+- Phase 2-4 経路2 のColabノート雛形完成（実行待ち）
+- Phase 2-5 train側のJSONL生成（OCR分は穴あき）
+- WAITING_FOR_USER.md に「OCRノート実行と attach承認をお願いします」
