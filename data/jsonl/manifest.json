@@ -1,0 +1,80 @@
+{
+  "exam_code": "takken",
+  "built_at": "2026-05-10T15:23:44.724116+00:00",
+  "instruction_text": "以下は宅地建物取引士資格試験の四択問題です。最も適切な選択肢の番号(1〜4)を1つだけ半角数字で答えよ。番号以外は出力しないこと。",
+  "include_years": [
+    {
+      "year": 2023,
+      "session": null,
+      "split": "train",
+      "source": "data/jsonl/intermediate/2023.json",
+      "count": 50
+    },
+    {
+      "year": 2024,
+      "session": null,
+      "split": "train",
+      "source": "data/jsonl/intermediate/2024.json",
+      "count": 50
+    },
+    {
+      "year": 2025,
+      "session": null,
+      "split": "eval",
+      "source": "data/jsonl/intermediate/2025.json",
+      "count": 50
+    }
+  ],
+  "train_count": 100,
+  "eval_count": 50,
+  "missing": [
+    {
+      "year": 2016,
+      "session": null
+    },
+    {
+      "year": 2017,
+      "session": null
+    },
+    {
+      "year": 2018,
+      "session": null
+    },
+    {
+      "year": 2019,
+      "session": null
+    },
+    {
+      "year": 2020,
+      "session": "oct"
+    },
+    {
+      "year": 2020,
+      "session": "dec"
+    },
+    {
+      "year": 2021,
+      "session": "oct"
+    },
+    {
+      "year": 2021,
+      "session": "dec"
+    },
+    {
+      "year": 2022,
+      "session": null
+    }
+  ],
+  "outputs": {
+    "train": {
+      "path": "data/jsonl/train/takken_train.jsonl",
+      "sha256": "a9f7d10bb2fd127f381334dc2e54e7402808bfa2fc165bdfbe076b847e858123",
+      "bytes": 150910
+    },
+    "eval": {
+      "path": "data/jsonl/eval/takken_eval.jsonl",
+      "sha256": "0c11f7b18249ef361eac08d46a3fab523141002feb09e8f14e9b86d77fea459a",
+      "bytes": 81239
+    }
+  }
+}
