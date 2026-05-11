@@ -1,62 +1,68 @@
-# 緊急: Drive 認証承認待ち（Phase 1 ベースライン実行中）
+# 緊急: Drive マウント失敗、Baseline 再実行が必要
 
-> **更新 (2026-05-11 12:30 JST)**: リポジトリ public 化後、ローカルClaude がColab `baseline_eval.ipynb` の自動実行に成功。**現在 Mac Mini Chrome の tab 5 で Google アカウント選択画面表示中**。ユーザー（在席中）の認証承認のみで完走可能。
+> **更新 (2026-05-11 12:35 JST)**: ローカル Claude が Colab tab3 の snapshot を取得して状況確認。**drive.mount セルで `ValueError: mount failed` が発生し、それ以降のセルは未実行**。Baseline accuracy は **未取得**。再実行が必要。
 
-## いますぐお願いしたいこと（30秒で済みます）
+## 現在の Colab 実行状態（snapshot 確認結果）
 
-### ステップA: Drive 認証承認（必須）
+| セル | 内容 | 結果 |
+|---|---|---|
+| 1 | `!nvidia-smi` | OK (Tesla T4, Mon May 11 03:27:33 2026) |
+| 2 | `torch.cuda.is_available()` | OK (True, Tesla T4) |
+| 3 | `pip install transformers==4.46.* accelerate bitsandbytes` | OK |
+| **4** | **`drive.mount('/content/drive')`** | **ValueError: mount failed** |
+| 5-18 | WORK_DIR cd / モデルロード / 推論 50 問 / accuracy 出力 | 未実行 |
 
-Mac Mini Chrome を見てください:
+## 失敗の想定原因
 
-1. **tab 5**（「ログイン - Google アカウント」）が現在アクティブになっています
-2. **`oota401@gmail.com` を選択してクリック**
-3. （初回なら）アクセス許可確認画面で **「許可」** をクリック
-4. 認証ポップアップが自動でクローズし、tab 3（baseline_eval.ipynb）に戻り、Drive がマウントされてベースライン評価が継続実行されます
+- OAuth アカウント選択画面 (Mac Mini Chrome tab5) で **`oota401@gmail.com` 選択 + 「許可」承認が完了していない / 途中で離脱した**
+- Colab 公式 FAQ: `mount failed` は OAuth 承認未完了 or タイムアウト（数分）が原因
+  - https://research.google.com/colaboratory/faq.html#drive-timeout
 
-### ステップB: その後の自動進行（ユーザーは何もしなくてOK）
+## いますぐお願いしたいこと（5分）
 
-承認後は以下が自動進行（10〜20分想定）:
-- モデル DL（Qwen2.5-7B-Instruct、4bit）: 5〜10 分
-- 推論 50 問: 5〜10 分
-- 結果が `/content/drive/MyDrive/construction-llm-ft/results/baseline_eval.json` に保存される
-- ノート最下部のセル 18 出力に `Baseline accuracy: X/50 = 0.XXXX` が表示される
+### ステップ1: Colab tab3 をアクティブにする
 
-### ステップC: 完走後の Mac Mini 側ユーザーアクション
+Mac Mini Chrome の **tab 3 (baseline_eval.ipynb)** を開いてください。
 
-1. ノート最下部のセル出力で `Baseline accuracy: X/50 = 0.XXXX` を確認
-2. 数値を Slack なり別ターミナルなりでローカルClaude / Mac Mini Claude に伝える
-3. **結果ファイル `results/baseline_eval.json` の取り込み**:
-   - **方法1（簡単）**: Colab UI の左サイドバー「ファイル」アイコン → drive/MyDrive/construction-llm-ft/results/baseline_eval.json を右クリック→「ダウンロード」→ `~/construction-llm-ft/results/` に置く
-   - **方法2 (rclone等の同期手段があれば使用)**
-4. 取り込んだら Mac Mini Claude に「ベースライン結果取り込み完了」と指示
-   - Mac Mini Claude が次の Phase 4-5 (FT) 着手か、結果プロットへ進む
+### ステップ2: ランタイムをリセットして再実行（推奨）
 
-## ローカルClaude の自動実行進捗（参考）
+1. メニュー: **「ランタイム → ランタイムを接続解除して削除」** をクリック（既存セッションをクリアする）
+2. メニュー: **「ランタイム → ランタイムのタイプを変更」** で **T4 GPU** を選択
+3. メニュー: **「ランタイム → すべてのセルを実行」** をクリック
+4. 警告ダイアログ「Google が作成したノートではありません」→ **「このまま実行」**
+5. drive.mount セルで認証ダイアログ → **「Google ドライブに接続」** クリック
+6. ポップアップで **`oota401@gmail.com` を選択 → 「許可」(最後まで)** クリック
+   - **重要**: 「許可」ボタンが画面下にあり、スクロール必要な場合あり。最後まで承認する
+7. 認証ポップアップが自動でクローズし、ノートに戻り Drive がマウントされる
 
-| Step | 状態 |
-|---|---|
-| 1. CDP attach（既存 chrome セッション） | OK |
-| 2. Colab URL `https://colab.research.google.com/github/nurupoga/construction-llm-ft/blob/main/notebooks/baseline_eval.ipynb` navigate | OK |
-| 3. T4 GPU 設定確認（既に [checked]） | OK |
-| 4. 「すべてのセルを実行」 | OK |
-| 5. 警告ダイアログ「Google 作成ノートじゃない」→「このまま実行」 | OK |
-| 6. Drive 認証ダイアログ表示 → 「Google ドライブに接続」 | OK |
-| **7. Google OAuth アカウント選択画面 (tab 5)** | **← ユーザー対応待ち（いまここ）** |
-| 8. Drive マウント成功 → モデル DL → 推論 50 問 → 結果保存 | 承認後自動 |
+### ステップ3 (代替案): drive.mount セルだけ再実行
 
-## ローカルClaude が止まった理由
+- ランタイムを残したまま、セル4 (drive.mount) を **再生ボタン** で単独実行する
+- 上記ステップ2の 5〜7 と同じく OAuth 完了させる
+- その後、未実行の セル5〜18 を順に実行（または「ランタイム → 以下のセルを実行」）
 
-- Bash 連続 25 回到達（hook ブロック）
-- OAuth アカウント選択は仕様上 cross-origin で playwright-cli からの操作も Google 側でブロックされる可能性大 → どちらにせよユーザー対応必要
+### ステップ4: 完走確認
 
-## リポ public 戻しタイミング
+- 10〜20分後、ノート末尾セル (セル18想定) の出力に
+  ```
+  Baseline accuracy: X/50 = 0.XXXX
+  saved: /content/drive/MyDrive/construction-llm-ft/results/baseline_eval.json
+  ```
+  が表示される
+- ユーザーが accuracy 数値を ローカル/Mac Mini Claude に伝える
 
-- ベースライン完走後、`gh repo edit --visibility private` で戻して OK
-- 念のため FT (ft_qlora.ipynb) も同じ public 期間中に Colab 起動できるとよい
-  - FT は 1.5〜3h 想定なので、認証承認だけで放置可能
-- ただし優先度: まずベースライン完走 → 結果確認 → 後で FT 着手 でも問題なし
+### ステップ5: 結果ファイル取り込み
+
+- Colab UI 左サイドバー「ファイル」アイコン → `drive/MyDrive/construction-llm-ft/results/baseline_eval.json` を右クリック → 「ダウンロード」
+- ダウンロードした json を `~/construction-llm-ft/results/baseline_eval.json` に配置
+- ローカル/Mac Mini Claude に「ベースライン結果取り込み完了」と指示
+
+## ローカル Claude 側のステータス
+
+- 進行可能なステップなし（OAuth 承認は cross-origin で playwright-cli から自動化不可）
+- 次に Claude が動けるタイミング: ユーザーが accuracy 数値を伝えるか、`results/baseline_eval.json` をリポに配置した時
 
 ---
 
 作成日時: 2026-05-11 01:15 JST
-更新日時: 2026-05-11 12:30 JST（ローカル Claude 自動実行 partial 成功 → OAuth 承認待ち）
+更新日時: 2026-05-11 12:35 JST（Drive マウント失敗確認、再実行依頼）
