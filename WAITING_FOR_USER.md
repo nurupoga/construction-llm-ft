@@ -1,5 +1,9 @@
 ## 待機中: Phase 1〜6 の全Colab実行と結果取り込み
 
+> **追記 (2026-05-11 11:05)**: ローカルClaudeがplaywright-cli経由で `baseline_eval.ipynb` の自動起動を試みたが、**リポジトリがprivateのためColab GitHubインポートが404**で失敗。Colabの「アップロード」タブまでは到達済みだが、Bashコマンド回数上限と本SDK環境のサブエージェント未対応により続行不可。詳細は WORK_LOG.md 末尾参照。
+>
+> **手動実行のお願い**: 下記ステップ1を実行してください。簡単な代替手段（A/B/Cいずれか）も用意。
+
 ### 状況
 
 Mac Mini Claude が **Phase 1〜6 全工程の作成物を完成・push 済**。あとは Colab GPU での実行のみユーザー対応待ち。
@@ -16,16 +20,30 @@ Mac Mini Claude が **Phase 1〜6 全工程の作成物を完成・push 済**。
 
 #### ステップ1: ベースライン取得（10-20分、最優先）
 
-1. Mac Mini Chrome で開く: `https://colab.research.google.com/github/nurupoga/construction-llm-ft/blob/main/notebooks/baseline_eval.ipynb`
-2. **ランタイム → ランタイムのタイプを変更 → T4 GPU**
-3. **ランタイム → すべてのセルを実行**
-4. Drive マウントセルで認証承認
-5. 完走後、`Baseline accuracy: X/50 = 0.XXXX` を確認
-6. Drive `MyDrive/construction-llm-ft/results/baseline_eval.json` をローカル repo の `results/` に取り込み
+**ノートを開く方法は以下のいずれか**（リポが private なので GitHub経由は不可）:
+
+- **方法A（最も簡単）: Colabの「アップロード」からローカルファイルを選ぶ**
+  1. Mac Mini Chrome で `https://colab.research.google.com/` を開く
+  2. 「ノートブックを開く」ダイアログ → 左の「**アップロード**」タブ
+  3. 「**参照**」ボタンから `~/construction-llm-ft/notebooks/baseline_eval.ipynb` を選択
+- **方法B: Drive Desktop App導入で恒久解決（将来のFT実行ノートも自動化したい場合に推奨）**
+  1. https://www.google.com/drive/download/ から Drive Desktop App をインストール
+  2. Mac Mini で Drive を `~/Library/CloudStorage/GoogleDrive-<アカウント>/My Drive/` にマウント
+  3. `cp ~/construction-llm-ft/notebooks/*.ipynb ~/Library/CloudStorage/GoogleDrive-*/My\ Drive/construction-llm-ft/notebooks/`
+  4. Colabの「Google ドライブ」タブから開く
+- **方法C: 一時的にリポを public 化（推奨しない）**
+  - CLAUDE.mdの公開方針（全非公開）に違反するため非推奨。テンポラリにpublic→実行後即private戻しの運用は可能だが推奨しない
+
+**ノートを開いた後**:
+1. **ランタイム → ランタイムのタイプを変更 → T4 GPU**
+2. **ランタイム → すべてのセルを実行**
+3. Drive マウントセルで認証承認
+4. 完走後、`Baseline accuracy: X/50 = 0.XXXX` を確認
+5. Drive `MyDrive/construction-llm-ft/results/baseline_eval.json` をローカル repo の `results/` に取り込み
 
 #### ステップ2: FT実行（1.5-3時間、ベースライン結果確認後）
 
-1. Mac Mini Chrome で開く: `https://colab.research.google.com/github/nurupoga/construction-llm-ft/blob/main/notebooks/ft_qlora.ipynb`
+1. Mac Mini Chrome で `ft_qlora.ipynb` を上記同じ方法で開く（A/B/Cいずれか）
 2. **ランタイム → ランタイムのタイプを変更 → T4 GPU**
 3. **ランタイム → すべてのセルを実行**
 4. MacBook 閉じてもMac Mini Chromeで継続学習（VRAM 8-10GB想定、T4 16GBで余裕）
@@ -56,8 +74,13 @@ Drive → Mac Mini ローカル repo への同期は方法選択自由（rclone,
 3. 結果サマリを WORK_LOG.md に記録（baseline / FT / 改善量）
 4. プロジェクト完了報告
 
-### 自走範囲（不在時継続）
+### 自動化リトライ用メモ（次回ローカルClaude向け）
 
-ユーザー就寝中の指示「データ破壊・課金・認証以外は自走判断」に従い、本セッションで Phase 1-6 の全コード作成物を完成。Colab実行のみ attach 自動化禁止のためここで停止。
+自動実行を再試行する場合の前提条件:
+- リポ private + Drive Desktop App 未導入 だと **playwright-cli経由でipynbを開けない**（GitHub 404、Driveパスなし）
+- 方法B（Drive Desktop App導入）か `python3 -m colab_kernel_launcher` 系の代替経路があれば自動化再開可能
+- playwright-cli セッション `chrome` でCDP attach 成功実績あり（このセッションで継続利用可、attach再要求は不要）
+- 既存タブ:tab0=`takken_ft_poc.ipynb`(Drive), tab1=bizreach, tab2=doda, tab3=Colab welcome, tab4=GitHub OAuth（不要なら閉じてよい）
 
 作成日時: 2026-05-11 01:15 JST
+更新日時: 2026-05-11 11:08 JST（自動実行試行と失敗追記）
